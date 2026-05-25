@@ -262,22 +262,44 @@ const decks = [
 
 const STORAGE_KEY = 'ps-quiz-user-data';
 
-// Snapshot built-in card counts so we can tell user additions apart
+// Snapshot built-in deck IDs and original question texts before any mutations
 const builtInCounts = Object.fromEntries(decks.map(d => [d.id, d.cards.length]));
+const builtInCards  = Object.fromEntries(decks.map(d => [d.id, d.cards.map(c => c.question)]));
 
 function loadFromStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
-    const { extraCards = {}, customDecks = [] } = JSON.parse(raw);
+    const {
+      extraCards = {},
+      customDecks = [],
+      deletedBuiltInIds: deletedDecks = [],
+      deletedBuiltInCards: deletedCards = {}
+    } = JSON.parse(raw);
 
-    // Merge extra cards into existing decks
+    // Remove built-in decks the user has deleted
+    deletedDecks.forEach(id => {
+      deletedBuiltInIds.add(id);
+      const idx = decks.findIndex(d => d.id === id);
+      if (idx !== -1) decks.splice(idx, 1);
+    });
+
+    // Remove individually deleted built-in cards (matched by question text)
+    Object.entries(deletedCards).forEach(([deckId, questions]) => {
+      const deck = decks.find(d => d.id === deckId);
+      if (deck) {
+        const removed = new Set(questions);
+        deck.cards = deck.cards.filter(c => !removed.has(c.question));
+      }
+    });
+
+    // Merge user-added cards into existing decks
     Object.entries(extraCards).forEach(([id, cards]) => {
       const deck = decks.find(d => d.id === id);
       if (deck) deck.cards.push(...cards);
     });
 
-    // Re-add any user-created decks
+    // Re-add user-created decks
     decks.push(...customDecks);
   } catch (e) {
     // Corrupt storage — skip silently
@@ -285,26 +307,41 @@ function loadFromStorage() {
 }
 
 function saveToStorage() {
-  const extraCards = {};
+  const extraCards         = {};
+  const deletedBuiltInCards = {};
+
   decks.forEach(deck => {
-    const originalCount = builtInCounts[deck.id];
-    if (originalCount !== undefined) {
-      const added = deck.cards.slice(originalCount);
+    const origQuestions = builtInCards[deck.id];
+    if (origQuestions) {
+      // User-added cards: present in deck but not in original built-ins
+      const origSet = new Set(origQuestions);
+      const added = deck.cards.filter(c => !origSet.has(c.question));
       if (added.length > 0) extraCards[deck.id] = added;
+
+      // Deleted built-in cards: in original but no longer in deck
+      const currentSet = new Set(deck.cards.map(c => c.question));
+      const deleted = origQuestions.filter(q => !currentSet.has(q));
+      if (deleted.length > 0) deletedBuiltInCards[deck.id] = deleted;
     }
   });
 
-  const customDecks = decks.filter(d => builtInCounts[d.id] === undefined);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ extraCards, customDecks }));
+  const customDecks = decks.filter(d => !builtInCards[d.id]);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    extraCards,
+    customDecks,
+    deletedBuiltInIds:   [...deletedBuiltInIds],
+    deletedBuiltInCards,
+  }));
 }
 
 // ─────────────────────────────────────────────
 //  STATE
 // ─────────────────────────────────────────────
 
-let activeDeck  = null;
-let activeCards = [];
-let currentIndex = 0;
+let activeDeck        = null;
+let activeCards       = [];
+let currentIndex      = 0;
+let deletedBuiltInIds = new Set();
 
 // ─────────────────────────────────────────────
 //  ELEMENT REFS
@@ -315,8 +352,9 @@ const studyView     = document.getElementById("study-view");
 const deckGrid      = document.getElementById("deck-grid");
 const studyDeckTitle = document.getElementById("study-deck-title");
 const studyDeckCount = document.getElementById("study-deck-count");
-const btnBack       = document.getElementById("btn-back");
-const cardList      = document.getElementById("card-list");
+const btnBack        = document.getElementById("btn-back");
+const cardList       = document.getElementById("card-list");
+const btnDeleteCard  = document.getElementById("btn-delete-card");
 
 const flashcard     = document.getElementById("flashcard");
 const cardQuestion  = document.getElementById("card-question");
@@ -338,6 +376,20 @@ const btnSave       = document.getElementById("btn-save");
 // ─────────────────────────────────────────────
 //  LIBRARY
 // ─────────────────────────────────────────────
+
+function deleteDeck(deckId) {
+  if (!confirm("Delete this deck? This cannot be undone.")) return;
+
+  if (builtInCounts[deckId] !== undefined) {
+    deletedBuiltInIds.add(deckId);
+  }
+
+  const idx = decks.findIndex(d => d.id === deckId);
+  if (idx !== -1) decks.splice(idx, 1);
+
+  saveToStorage();
+  renderLibrary();
+}
 
 function renderLibrary() {
   deckGrid.innerHTML = "";
@@ -366,9 +418,19 @@ function renderLibrary() {
       <div class="deck-card-count">${deck.cards.length} cards</div>
     `;
 
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "deck-delete-btn";
+    deleteBtn.title = "Delete deck";
+    deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+    deleteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteDeck(deck.id);
+    });
+
     card.appendChild(bg);
     if (!deck.image) card.appendChild(placeholder);
     card.appendChild(body);
+    card.appendChild(deleteBtn);
 
     card.addEventListener("click", () => openDeck(deck.id));
     deckGrid.appendChild(card);
@@ -428,6 +490,31 @@ function showCard(index) {
   updateCardListHighlight(index);
 }
 
+function deleteCard(index) {
+  if (!confirm("Delete this flashcard? This cannot be undone.")) return;
+
+  activeCards.splice(index, 1);
+
+  if (activeCards.length === 0) {
+    saveToStorage();
+    renderLibrary();
+    studyView.classList.add("hidden");
+    libraryView.classList.remove("hidden");
+    activeDeck = null;
+    return;
+  }
+
+  saveToStorage();
+  renderCardList();
+  if (currentIndex >= activeCards.length) currentIndex = activeCards.length - 1;
+  showCard(currentIndex);
+}
+
+btnDeleteCard.addEventListener("click", (e) => {
+  e.stopPropagation();
+  deleteCard(currentIndex);
+});
+
 btnBack.addEventListener("click", () => {
   studyView.classList.add("hidden");
   libraryView.classList.remove("hidden");
@@ -482,26 +569,49 @@ btnNewCard.addEventListener("click", () => {
   inputDeckName.value = "";
   inputQuestion.value = "";
   inputAnswer.value   = "";
+  clearModalError();
   modalOverlay.classList.remove("hidden");
   inputQuestion.focus();
 });
 
 btnCancel.addEventListener("click", () => {
+  clearModalError();
   modalOverlay.classList.add("hidden");
 });
 
 modalOverlay.addEventListener("click", (e) => {
-  if (e.target === modalOverlay) modalOverlay.classList.add("hidden");
+  if (e.target === modalOverlay) {
+    clearModalError();
+    modalOverlay.classList.add("hidden");
+  }
 });
+
+const modalError = document.getElementById("modal-error");
+
+function showModalError(msg) {
+  modalError.textContent = msg;
+  modalError.classList.remove("hidden");
+}
+
+function clearModalError() {
+  modalError.textContent = "";
+  modalError.classList.add("hidden");
+}
 
 btnSave.addEventListener("click", () => {
   const question = inputQuestion.value.trim();
   const answer   = inputAnswer.value.trim();
-  if (!question || !answer) return;
+
+  if (!question) { showModalError("Please enter a question."); return; }
+  if (question.length < 50) { showModalError(`Question must be at least 50 characters (currently ${question.length}).`); return; }
+  if (!answer) { showModalError("Please enter an answer."); return; }
+  if (answer.length < 50) { showModalError(`Answer must be at least 50 characters (currently ${answer.length}).`); return; }
+
+  clearModalError();
 
   if (selectDeck.value === "__new__") {
     const deckName = inputDeckName.value.trim();
-    if (!deckName) { inputDeckName.focus(); return; }
+    if (!deckName) { showModalError("Please enter a name for the new deck."); return; }
 
     const newDeck = {
       id: deckName.toLowerCase().replace(/\s+/g, '-'),
