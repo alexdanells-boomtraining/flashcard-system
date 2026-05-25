@@ -642,8 +642,32 @@ btnSave.addEventListener("click", () => {
 });
 
 // ─────────────────────────────────────────────
+//  LIGHT / DARK MODE
+// ─────────────────────────────────────────────
+
+const btnToggleMode = document.getElementById("btn-toggle-mode");
+
+function applyTheme(mode) {
+  if (mode === "light") {
+    document.body.classList.add("light-mode");
+    btnToggleMode.textContent = "🌙 Dark";
+  } else {
+    document.body.classList.remove("light-mode");
+    btnToggleMode.textContent = "☀ Light";
+  }
+}
+
+btnToggleMode.addEventListener("click", () => {
+  const isLight = document.body.classList.contains("light-mode");
+  const next = isLight ? "dark" : "light";
+  localStorage.setItem("ps-quiz-theme", next);
+  applyTheme(next);
+});
+
+// ─────────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────────
 
+applyTheme(localStorage.getItem("ps-quiz-theme") || "dark");
 loadFromStorage();
 renderLibrary();
