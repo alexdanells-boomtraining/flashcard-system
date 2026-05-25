@@ -1,7 +1,36 @@
 const cards = [
-  { question: "What is the capital of France?", answer: "Paris" },
-  { question: "What does HTML stand for?", answer: "HyperText Markup Language" },
-  { question: "What is 12 × 8?", answer: "96" },
+  {
+    question: "What is the name of Kratos's son in God of War (2018)?",
+    answer: "Atreus — also revealed to be Loki in Norse mythology."
+  },
+  {
+    question: "Which fungal infection turns humans into infected creatures in The Last of Us?",
+    answer: "Cordyceps — a real genus of parasitic fungi adapted to infect humans in the game's world."
+  },
+  {
+    question: "What is the name of the open-world game starring a hunter named Aloy in a world reclaimed by robotic creatures?",
+    answer: "Horizon Zero Dawn (2017), developed by Guerrilla Games."
+  },
+  {
+    question: "What is the real name of the Spider-Man in Insomniac's Marvel's Spider-Man (PS4)?",
+    answer: "Peter Parker — a 23-year-old who has been Spider-Man for 8 years."
+  },
+  {
+    question: "In Bloodborne, what city is the game primarily set in?",
+    answer: "Yharnam — a gothic city plagued by a blood-borne illness that turns citizens into beasts."
+  },
+  {
+    question: "Which PlayStation exclusive follows treasure hunter Nathan Drake across multiple games?",
+    answer: "Uncharted series, developed by Naughty Dog."
+  },
+  {
+    question: "What year did The Last of Us Part II release, and who is the playable protagonist?",
+    answer: "2020 — players primarily control Ellie, with sections as a new character named Abby."
+  },
+  {
+    question: "In Ghost of Tsushima, who is the main protagonist and what is his nickname?",
+    answer: "Jin Sakai — a samurai warrior who becomes 'The Ghost' to fight the Mongol invasion."
+  },
 ];
 
 let currentIndex = 0;

@@ -5,14 +5,21 @@
 }
 
 :root {
-  --bg:        #0d1b2a;
-  --surface:   #1b2e45;
-  --accent:    #2a7fdd;
-  --accent-hover: #1e6bbf;
-  --text:      #f0f4f8;
-  --text-muted:#8fa8c8;
-  --border:    #2c4a6e;
-  --radius:    12px;
+  --bg:           #0c0c0c;
+  --surface:      #1c1c1c;
+  --surface-back: #252525;
+  --accent:       #003791;
+  --accent-hover: #0049b8;
+  --text:         #ffffff;
+  --text-muted:   #8a8a8a;
+  --border:       #333333;
+  --radius:       12px;
+
+  /* PlayStation button colours */
+  --ps-triangle: #00a896;
+  --ps-circle:   #e8003d;
+  --ps-cross:    #0070d1;
+  --ps-square:   #cc3d8e;
 }
 
 body {
@@ -33,11 +40,30 @@ header {
   border-bottom: 1px solid var(--border);
 }
 
-header h1 {
+.header-title h1 {
   font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
+
+.header-title p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.15rem;
+}
+
+.ps-symbols {
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+}
+
+.sym-triangle { color: var(--ps-triangle); }
+.sym-circle   { color: var(--ps-circle); }
+.sym-cross    { color: var(--ps-cross); }
+.sym-square   { color: var(--ps-square); }
 
 /* ── Buttons ── */
 button {
@@ -57,6 +83,7 @@ button:active {
   background: var(--accent);
   color: var(--text);
   padding: 0.55rem 1.2rem;
+  letter-spacing: 0.03em;
 }
 
 #btn-new-card:hover {
@@ -79,12 +106,12 @@ main {
   align-items: center;
   gap: 2rem;
   width: 100%;
-  max-width: 600px;
+  max-width: 620px;
 }
 
 #flashcard {
   width: 100%;
-  height: 280px;
+  height: 300px;
   perspective: 1000px;
   cursor: pointer;
 }
@@ -106,8 +133,10 @@ main {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
   padding: 2rem;
   border-radius: var(--radius);
   background: var(--surface);
@@ -118,7 +147,8 @@ main {
 
 #flashcard-back {
   transform: rotateY(180deg);
-  background: #1a3a5c;
+  background: var(--surface-back);
+  border-color: #444;
 }
 
 #flashcard-front p,
@@ -126,6 +156,13 @@ main {
   font-size: 1.25rem;
   text-align: center;
   line-height: 1.6;
+}
+
+.card-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* ── Card controls ── */
@@ -142,8 +179,13 @@ main {
   border: 1px solid var(--border);
 }
 
-#card-controls button:hover {
+#card-controls button:hover:not(:disabled) {
   background: var(--border);
+}
+
+#card-controls button:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
 #card-counter {
@@ -157,7 +199,7 @@ main {
 #modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -182,13 +224,17 @@ main {
 
 #modal h2 {
   margin-bottom: 0.5rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 1rem;
+  color: var(--text-muted);
 }
 
 #modal label {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 #modal textarea {

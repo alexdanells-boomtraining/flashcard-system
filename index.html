@@ -3,13 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flashcards</title>
+  <title>PS Quiz</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <header>
-    <h1>Flashcards</h1>
+    <div class="header-title">
+      <h1>PS Quiz</h1>
+      <p>PlayStation Exclusives</p>
+    </div>
+    <span class="ps-symbols">
+      <span class="sym-triangle">&#9651;</span>
+      <span class="sym-circle">&#9675;</span>
+      <span class="sym-cross">&#10005;</span>
+      <span class="sym-square">&#9633;</span>
+    </span>
     <button id="btn-new-card">+ New Card</button>
   </header>
 
@@ -19,9 +28,11 @@
         <div id="flashcard-inner">
           <div id="flashcard-front">
             <p id="card-question"></p>
+            <span class="card-hint">&#9675; Click to reveal</span>
           </div>
           <div id="flashcard-back">
             <p id="card-answer"></p>
+            <span class="card-hint">&#10005; Click to flip back</span>
           </div>
         </div>
       </div>
