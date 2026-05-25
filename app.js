@@ -274,6 +274,7 @@ const deckGrid      = document.getElementById("deck-grid");
 const studyDeckTitle = document.getElementById("study-deck-title");
 const studyDeckCount = document.getElementById("study-deck-count");
 const btnBack       = document.getElementById("btn-back");
+const cardList      = document.getElementById("card-list");
 
 const flashcard     = document.getElementById("flashcard");
 const cardQuestion  = document.getElementById("card-question");
@@ -336,6 +337,29 @@ function renderLibrary() {
 //  STUDY VIEW
 // ─────────────────────────────────────────────
 
+function renderCardList() {
+  cardList.innerHTML = "";
+  activeCards.forEach((_, i) => {
+    const item = document.createElement("div");
+    item.className = "card-list-item";
+    item.textContent = i + 1;
+    item.dataset.index = i;
+    item.addEventListener("click", () => {
+      currentIndex = i;
+      showCard(i);
+    });
+    cardList.appendChild(item);
+  });
+}
+
+function updateCardListHighlight(index) {
+  cardList.querySelectorAll(".card-list-item").forEach(el => {
+    el.classList.toggle("active", Number(el.dataset.index) === index);
+  });
+  const active = cardList.querySelector(".card-list-item.active");
+  if (active) active.scrollIntoView({ block: "nearest" });
+}
+
 function openDeck(deckId) {
   activeDeck  = decks.find(d => d.id === deckId);
   activeCards = activeDeck.cards;
@@ -347,6 +371,7 @@ function openDeck(deckId) {
   libraryView.classList.add("hidden");
   studyView.classList.remove("hidden");
 
+  renderCardList();
   showCard(0);
 }
 
@@ -358,6 +383,7 @@ function showCard(index) {
   cardCounter.textContent  = `${index + 1} / ${activeCards.length}`;
   btnPrev.disabled = index === 0;
   btnNext.disabled = index === activeCards.length - 1;
+  updateCardListHighlight(index);
 }
 
 btnBack.addEventListener("click", () => {

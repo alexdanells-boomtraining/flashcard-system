@@ -45,24 +45,30 @@
         </div>
       </div>
 
-      <div id="card-area">
-        <div id="flashcard">
-          <div id="flashcard-inner">
-            <div id="flashcard-front">
-              <p id="card-question"></p>
-              <span class="card-hint">&#9675; Click to reveal</span>
-            </div>
-            <div id="flashcard-back">
-              <p id="card-answer"></p>
-              <span class="card-hint">&#10005; Click to flip back</span>
+      <div id="study-body">
+        <aside id="card-list">
+          <!-- numbered list rendered by JS -->
+        </aside>
+
+        <div id="card-area">
+          <div id="flashcard">
+            <div id="flashcard-inner">
+              <div id="flashcard-front">
+                <p id="card-question"></p>
+                <span class="card-hint">&#9675; Click to reveal</span>
+              </div>
+              <div id="flashcard-back">
+                <p id="card-answer"></p>
+                <span class="card-hint">&#10005; Click to flip back</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div id="card-controls">
-          <button id="btn-prev">&#8592; Prev</button>
-          <span id="card-counter"></span>
-          <button id="btn-next">Next &#8594;</button>
+          <div id="card-controls">
+            <button id="btn-prev">&#8592; Prev</button>
+            <span id="card-counter"></span>
+            <button id="btn-next">Next &#8594;</button>
+          </div>
         </div>
       </div>
     </section>
