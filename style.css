@@ -15,7 +15,6 @@
   --border:       #333333;
   --radius:       12px;
 
-  /* PlayStation button colours */
   --ps-triangle: #00a896;
   --ps-circle:   #e8003d;
   --ps-cross:    #0070d1;
@@ -38,6 +37,7 @@ header {
   justify-content: space-between;
   padding: 1.25rem 2rem;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
 .header-title h1 {
@@ -94,9 +94,159 @@ button:active {
 main {
   flex: 1;
   display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ── Library View ── */
+#library-view {
+  flex: 1;
+  padding: 3rem 2rem;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.library-heading {
+  margin-bottom: 2.5rem;
+}
+
+.library-heading h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.library-heading p {
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+}
+
+#deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ── Deck Card ── */
+.deck-card {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 2 / 3;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.deck-card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+.deck-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+/* gradient overlay so title is always readable */
+.deck-card-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
+}
+
+.deck-card-body {
+  position: relative;
+  z-index: 1;
+  padding: 1rem 1rem 1.1rem;
+}
+
+.deck-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+}
+
+.deck-card-count {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.55);
+  margin-top: 0.25rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* placeholder text shown when no image */
+.deck-card-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  opacity: 0.18;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* ── Study View ── */
+#study-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 2rem;
+  gap: 2rem;
+}
+
+#study-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 620px;
+}
+
+#btn-back {
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#btn-back:hover {
+  background: var(--border);
+}
+
+#study-deck-info h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+#study-deck-count {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* ── Flashcard ── */
@@ -153,7 +303,7 @@ main {
 
 #flashcard-front p,
 #flashcard-back p {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   text-align: center;
   line-height: 1.6;
 }
@@ -207,7 +357,7 @@ main {
 }
 
 #modal-overlay.hidden {
-  display: none;
+  display: none !important;
 }
 
 #modal {
@@ -237,6 +387,8 @@ main {
   letter-spacing: 0.08em;
 }
 
+#modal select,
+#modal input[type="text"],
 #modal textarea {
   background: var(--bg);
   border: 1px solid var(--border);
@@ -244,13 +396,29 @@ main {
   color: var(--text);
   font-size: 1rem;
   padding: 0.75rem;
-  resize: vertical;
   width: 100%;
   font-family: inherit;
 }
 
+#modal select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+#modal textarea {
+  resize: vertical;
+}
+
+#modal select:focus,
+#modal input[type="text"]:focus,
 #modal textarea:focus {
   outline: 2px solid var(--accent);
+}
+
+#new-deck-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 #modal-actions {

@@ -23,36 +23,71 @@
   </header>
 
   <main>
-    <section id="card-area">
-      <div id="flashcard">
-        <div id="flashcard-inner">
-          <div id="flashcard-front">
-            <p id="card-question"></p>
-            <span class="card-hint">&#9675; Click to reveal</span>
-          </div>
-          <div id="flashcard-back">
-            <p id="card-answer"></p>
-            <span class="card-hint">&#10005; Click to flip back</span>
-          </div>
+
+    <!-- ── Library View ── -->
+    <section id="library-view">
+      <div class="library-heading">
+        <h2>Choose Your Deck</h2>
+        <p>Select a game to start studying</p>
+      </div>
+      <div id="deck-grid">
+        <!-- deck cards rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ── Study View ── -->
+    <section id="study-view" class="hidden">
+      <div id="study-header">
+        <button id="btn-back">&#8592; Library</button>
+        <div id="study-deck-info">
+          <h2 id="study-deck-title"></h2>
+          <span id="study-deck-count"></span>
         </div>
       </div>
 
-      <div id="card-controls">
-        <button id="btn-prev">&#8592; Prev</button>
-        <span id="card-counter"></span>
-        <button id="btn-next">Next &#8594;</button>
+      <div id="card-area">
+        <div id="flashcard">
+          <div id="flashcard-inner">
+            <div id="flashcard-front">
+              <p id="card-question"></p>
+              <span class="card-hint">&#9675; Click to reveal</span>
+            </div>
+            <div id="flashcard-back">
+              <p id="card-answer"></p>
+              <span class="card-hint">&#10005; Click to flip back</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="card-controls">
+          <button id="btn-prev">&#8592; Prev</button>
+          <span id="card-counter"></span>
+          <button id="btn-next">Next &#8594;</button>
+        </div>
       </div>
     </section>
+
   </main>
 
-  <!-- Modal: Create new card -->
+  <!-- ── Modal: Create new card ── -->
   <div id="modal-overlay" class="hidden">
     <div id="modal">
       <h2>New Flashcard</h2>
+
+      <label for="select-deck">Deck</label>
+      <select id="select-deck"></select>
+
+      <div id="new-deck-field" class="hidden">
+        <label for="input-deck-name">New Deck Name</label>
+        <input type="text" id="input-deck-name" placeholder="e.g. Horizon Zero Dawn">
+      </div>
+
       <label for="input-question">Question</label>
       <textarea id="input-question" rows="3" placeholder="Enter question…"></textarea>
+
       <label for="input-answer">Answer</label>
       <textarea id="input-answer" rows="3" placeholder="Enter answer…"></textarea>
+
       <div id="modal-actions">
         <button id="btn-cancel">Cancel</button>
         <button id="btn-save">Save Card</button>
