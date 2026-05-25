@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Flashcards</h1>
+    <button id="btn-new-card">+ New Card</button>
+  </header>
+
+  <main>
+    <section id="card-area">
+      <div id="flashcard">
+        <div id="flashcard-inner">
+          <div id="flashcard-front">
+            <p id="card-question"></p>
+          </div>
+          <div id="flashcard-back">
+            <p id="card-answer"></p>
+          </div>
+        </div>
+      </div>
+
+      <div id="card-controls">
+        <button id="btn-prev">&#8592; Prev</button>
+        <span id="card-counter"></span>
+        <button id="btn-next">Next &#8594;</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Create new card -->
+  <div id="modal-overlay" class="hidden">
+    <div id="modal">
+      <h2>New Flashcard</h2>
+      <label for="input-question">Question</label>
+      <textarea id="input-question" rows="3" placeholder="Enter question…"></textarea>
+      <label for="input-answer">Answer</label>
+      <textarea id="input-answer" rows="3" placeholder="Enter answer…"></textarea>
+      <div id="modal-actions">
+        <button id="btn-cancel">Cancel</button>
+        <button id="btn-save">Save Card</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
