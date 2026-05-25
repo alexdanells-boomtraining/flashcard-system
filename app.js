@@ -257,6 +257,48 @@ const decks = [
 ];
 
 // ─────────────────────────────────────────────
+//  STORAGE
+// ─────────────────────────────────────────────
+
+const STORAGE_KEY = 'ps-quiz-user-data';
+
+// Snapshot built-in card counts so we can tell user additions apart
+const builtInCounts = Object.fromEntries(decks.map(d => [d.id, d.cards.length]));
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const { extraCards = {}, customDecks = [] } = JSON.parse(raw);
+
+    // Merge extra cards into existing decks
+    Object.entries(extraCards).forEach(([id, cards]) => {
+      const deck = decks.find(d => d.id === id);
+      if (deck) deck.cards.push(...cards);
+    });
+
+    // Re-add any user-created decks
+    decks.push(...customDecks);
+  } catch (e) {
+    // Corrupt storage — skip silently
+  }
+}
+
+function saveToStorage() {
+  const extraCards = {};
+  decks.forEach(deck => {
+    const originalCount = builtInCounts[deck.id];
+    if (originalCount !== undefined) {
+      const added = deck.cards.slice(originalCount);
+      if (added.length > 0) extraCards[deck.id] = added;
+    }
+  });
+
+  const customDecks = decks.filter(d => builtInCounts[d.id] === undefined);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ extraCards, customDecks }));
+}
+
+// ─────────────────────────────────────────────
 //  STATE
 // ─────────────────────────────────────────────
 
@@ -470,14 +512,17 @@ btnSave.addEventListener("click", () => {
       cards: [{ question, answer }]
     };
     decks.push(newDeck);
+    saveToStorage();
     renderLibrary();
   } else {
     const target = decks.find(d => d.id === selectDeck.value);
     target.cards.push({ question, answer });
+    saveToStorage();
 
     if (activeDeck && activeDeck.id === target.id) {
       activeCards = target.cards;
       studyDeckCount.textContent = `${activeCards.length} cards`;
+      renderCardList();
       currentIndex = activeCards.length - 1;
       showCard(currentIndex);
     }
@@ -490,4 +535,5 @@ btnSave.addEventListener("click", () => {
 //  INIT
 // ─────────────────────────────────────────────
 
+loadFromStorage();
 renderLibrary();
